@@ -1,40 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation"; // For Next.js 13+
+import React, { use, Suspense, useState, useEffect } from "react";
 
-const BlogRead = ({ params }) => {
+const BlogPage = ({ params }) => {
+  // Unwrapping the params using React.use()
+  const unwrappedParams = use(params);
+  const { id } = unwrappedParams; // Safely access `id`
+
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [unwrappedParams, setUnwrappedParams] = useState(null);
-  const { id } = params; // Access the dynamic id parameter
 
-  // Unwrap params using React.use()
   useEffect(() => {
-    if (id instanceof Promise) {
-      id.then((unwrappedId) => setUnwrappedParams(unwrappedId)); // Set the unwrapped params
-    } else {
-      setUnwrappedParams(id); // Directly set if it's not a promise
-    }
+    const fetchBlog = async () => {
+      try {
+        const response = await fetch(`/api/blog/${id}`);
+        const data = await response.json();
+        setBlog(data);
+      } catch (error) {
+        console.error("Error fetching blog:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) fetchBlog();
   }, [id]);
-
-  useEffect(() => {
-    if (unwrappedParams) {
-      const fetchBlog = async () => {
-        try {
-          const response = await fetch(`/api/blog/${unwrappedParams}`);
-          const data = await response.json();
-          setBlog(data);
-          setLoading(false);
-        } catch (error) {
-          console.error("Error fetching blog:", error);
-          setLoading(false);
-        }
-      };
-
-      fetchBlog();
-    }
-  }, [unwrappedParams]);
 
   if (loading) {
     return (
@@ -69,7 +59,7 @@ const BlogRead = ({ params }) => {
         <p>{blog.content}</p>
       </div>
 
-      {/* Back Button (Optional) */}
+      {/* Back Button */}
       <div className="flex justify-center">
         <a
           href="/"
@@ -81,5 +71,18 @@ const BlogRead = ({ params }) => {
     </div>
   );
 };
+
+// Suspense Wrapper
+const BlogRead = ({ params }) => (
+  <Suspense
+    fallback={
+      <div className="flex justify-center items-center h-screen">
+        Loading...
+      </div>
+    }
+  >
+    <BlogPage params={params} />
+  </Suspense>
+);
 
 export default BlogRead;
