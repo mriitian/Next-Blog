@@ -26,7 +26,7 @@ const CreateBlog = () => {
         method: "POST",
         body: JSON.stringify({
           title: post.title,
-          title: post.description,
+          description: post.description,
           content: post.content,
           userId: session?.user.id,
           tags: post.tags.split(",").map((tag) => tag.trim()), // split tags by comma and trim spaces
@@ -47,7 +47,7 @@ const CreateBlog = () => {
     <BlogForm
       type="Create"
       post={post}
-      SetPost={SetPost}
+      setPost={SetPost}
       submitting={submitting}
       handleSubmit={createBlog}
     />

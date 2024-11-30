@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React from "react";
 
-const BlogForm = ({ type, post, SetPost, submitting, handleSubmit }) => {
+const BlogForm = ({ type, post, setPost, submitting, handleSubmit }) => {
   return (
     <section className="w-full max-w-full flex-start flex-col">
       <h1 className="head_text text-left">
@@ -23,7 +23,7 @@ const BlogForm = ({ type, post, SetPost, submitting, handleSubmit }) => {
           <input
             type="text"
             value={post.title}
-            onChange={(e) => SetPost({ ...post, title: e.target.value })}
+            onChange={(e) => setPost({ ...post, title: e.target.value })}
             placeholder="Enter the title of your blog"
             required
             className="form_input"
@@ -36,7 +36,7 @@ const BlogForm = ({ type, post, SetPost, submitting, handleSubmit }) => {
           </span>
           <textarea
             value={post.content}
-            onChange={(e) => SetPost({ ...post, content: e.target.value })}
+            onChange={(e) => setPost({ ...post, content: e.target.value })}
             placeholder="Write the content of your blog here"
             required
             className="form_textarea"
@@ -53,7 +53,7 @@ const BlogForm = ({ type, post, SetPost, submitting, handleSubmit }) => {
           <input
             type="text"
             value={post.tags}
-            onChange={(e) => SetPost({ ...post, tags: e.target.value })}
+            onChange={(e) => setPost({ ...post, tags: e.target.value })}
             placeholder="Add tags"
             required
             className="form_input"
@@ -66,7 +66,9 @@ const BlogForm = ({ type, post, SetPost, submitting, handleSubmit }) => {
           </span>
           <select
             value={post.published}
-            onChange={(e) => SetPost({ ...post, published: e.target.value })}
+            onChange={(e) =>
+              setPost({ ...post, published: e.target.value === "true" })
+            }
             className="form_input"
           >
             <option value={true}>Yes</option>

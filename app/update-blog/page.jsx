@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Form from "@components/Form"; // Assuming you have a Form component for blog editing
+import BlogForm from "@components/BlogForm";
 
 const UpdateBlog = () => {
   const router = useRouter();
@@ -68,7 +69,7 @@ const UpdateBlog = () => {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <Form
+      <BlogForm
         type="Edit"
         post={post}
         setPost={setPost}

@@ -31,7 +31,7 @@ const BlogCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
   };
 
   return (
-    <div className="blog_card" onClick={handleCardClick}>
+    <div className="blog_card">
       {" "}
       {/* Add this click handler */}
       <div className="flex justify-between items-start gap-5">
@@ -68,6 +68,9 @@ const BlogCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
             width={12}
             height={12}
           />
+        </div>
+        <div className="copy_btn" onClick={handleCardClick}>
+          Open
         </div>
       </div>
       <h3 className="my-4 font-satoshi text-xl text-gray-900">{post.title}</h3>
