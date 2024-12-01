@@ -1,10 +1,11 @@
-/** @type {import('next').NextConfig} */
+/**
+ * @type {import('next').NextConfig}
+ */
 const nextConfig = {
   experimental: {
-    appDir: true,
-    serverComponentsExternalPackages: ["mongoose"],
-    missingSuspenseWithCSRBailout: false,
+    serverActions: {}, // Replace `true` with an empty object or specific configuration
   },
+  serverExternalPackages: ["mongoose"], // Correctly moved out of experimental
   images: {
     domains: ["lh3.googleusercontent.com"],
   },
