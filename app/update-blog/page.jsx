@@ -4,8 +4,11 @@ import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import BlogForm from "@components/BlogForm";
 
-const BlogUpdater = ({ blogId }) => {
+const UpdateBlog = () => {
   const router = useRouter();
+  const searchParams = typeof window !== "undefined" ? useSearchParams() : null;
+  const blogId = searchParams?.get("id");
+
   const [post, setPost] = useState({ title: "", content: "", tags: "" });
   const [submitting, setIsSubmitting] = useState(false);
 
@@ -21,7 +24,7 @@ const BlogUpdater = ({ blogId }) => {
         setPost({
           title: data.title,
           content: data.content,
-          tags: data.tags.join(", "),
+          tags: data.tags.join(", "), // assuming tags are returned as an array
         });
       } catch (error) {
         console.error("Error fetching blog details:", error);
@@ -47,12 +50,12 @@ const BlogUpdater = ({ blogId }) => {
         body: JSON.stringify({
           title: post.title,
           content: post.content,
-          tags: post.tags.split(",").map((tag) => tag.trim()),
+          tags: post.tags.split(",").map((tag) => tag.trim()), // splitting tags by comma
         }),
       });
 
       if (response.ok) {
-        router.push("/");
+        router.push("/"); // redirect to homepage or blog feed after update
       } else {
         throw new Error("Failed to update blog");
       }
@@ -64,27 +67,14 @@ const BlogUpdater = ({ blogId }) => {
   };
 
   return (
-    <BlogForm
-      type="Edit"
-      post={post}
-      setPost={setPost}
-      submitting={submitting}
-      handleSubmit={updateBlog}
-    />
-  );
-};
-
-const UpdateBlog = () => {
-  const searchParams = useSearchParams();
-  const blogId = searchParams?.get("id");
-
-  return (
     <Suspense fallback={<div>Loading...</div>}>
-      {blogId ? (
-        <BlogUpdater blogId={blogId} />
-      ) : (
-        <div>Blog ID is required</div>
-      )}
+      <BlogForm
+        type="Edit"
+        post={post}
+        setPost={setPost}
+        submitting={submitting}
+        handleSubmit={updateBlog}
+      />
     </Suspense>
   );
 };
