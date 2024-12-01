@@ -1,49 +1,45 @@
 import NextAuth from "next-auth/next";
-import GoogleProvider from "next-auth/providers/google"
+import GoogleProvider from "next-auth/providers/google";
 
-import {connectToDb} from '@utils/database'
+import { connectToDb } from "@utils/database";
 import User from "@models/User";
 
 const handler = NextAuth({
-    providers:[
-        GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET
-        })
-    ],
-    callbacks:{
-        async session({session}) {
-            const SessionUser = await User.findOne({
-                email: session.user.email
-            })
-    
-            session.user.id = SessionUser._id.toString();
-            return session;
-        },
-        async signIn({profile}){
-            try {
-                await connectToDb();
-                const UserExists = await User.findOne({
-                    email:profile.email
-                })
-    
-                if(!UserExists){
-                    await User.create({
-                        email: profile.email,
-                        username: profile.name.replace(" ","").toLowerCase(),
-                        image: profile.picture
-    
-                    })
-                }
-    
-                return true;
-            } catch (error) {
-                console.log(error)
-                return false;
-            }
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+  ],
+  callbacks: {
+    async session({ session }) {
+      try {
+        const SessionUser = await User.findOne({ email: session.user.email });
+        session.user.id = SessionUser._id.toString();
+        return session;
+      } catch (error) {
+        console.error("Error in session callback:", error);
+        throw new Error("Session callback failed.");
+      }
+    },
+    async signIn({ profile }) {
+      try {
+        await connectToDb();
+        const UserExists = await User.findOne({ email: profile.email });
+        if (!UserExists) {
+          await User.create({
+            email: profile.email,
+            username: profile.name.replace(" ", "").toLowerCase(),
+            image: profile.picture,
+          });
         }
-    }
-    
-})
+        return true;
+      } catch (error) {
+        console.error("Error in signIn callback:", error);
+        return false;
+      }
+    },
+  },
+});
 
-export {handler as GET, handler as POST};
+export { handler as GET, handler as POST };
